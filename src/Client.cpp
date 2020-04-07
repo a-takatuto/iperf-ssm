@@ -400,10 +400,9 @@ void Client::Connect( ) {
     mSettings->mSock = socket( domain, type, 0 );
     WARN_errno( mSettings->mSock == INVALID_SOCKET, "socket" );
 
+    SockAddr_localAddr( mSettings );
     SetSocketOptions( mSettings );
 
-
-    SockAddr_localAddr( mSettings );
     if ( mSettings->mLocalhost != NULL ) {
         // bind socket to local address
         char temp[100] = "cbind:";

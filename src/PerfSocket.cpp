@@ -156,5 +156,15 @@ void SetSocketOptions( thread_Settings *inSettings ) {
         }
 #endif
     }
+    char eth[IF_NAMESIZE] = {};
+    if (inSettings->mInterface){
+        strncpy(eth, inSettings->mInterface, sizeof(eth));
+    } else if (inSettings->local.ss_family == AF_INET6){
+        int scope_id = ((struct sockaddr_in6*)&inSettings->local)->sin6_scope_id;
+        if (scope_id > 0)
+            if_indextoname(scope_id, eth);
+    }
+    if (eth[0])
+        setsockopt(inSettings->mSock, SOL_SOCKET, SO_BINDTODEVICE, eth, strlen(eth));
 }
 // end SetSocketOptions

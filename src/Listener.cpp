@@ -382,7 +382,9 @@ void Listener::McastJoin( ) {
         memcpy( &mreq.ipv6mr_multiaddr, SockAddr_get_in6_addr( &mSettings->local ), 
                 sizeof(mreq.ipv6mr_multiaddr));
 
-        mreq.ipv6mr_interface = 0;
+        char *iface_str=mSettings->mInterface;
+        FAIL( iface_str == NULL, "multicast join: interface setting", mSettings );
+        mreq.ipv6mr_interface = if_nametoindex(iface_str);
 
         int rc = setsockopt( mSettings->mSock, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP,
                              (char*) &mreq, sizeof(mreq));
